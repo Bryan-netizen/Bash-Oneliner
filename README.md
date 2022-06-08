@@ -955,6 +955,10 @@ find . -type d
 ```bash
 find . -name '*.php' -exec sed -i 's/www/w/g' {} \;
 
+##### Find files and ls for more info 
+```bash
+find / -type -f -name <file> -ls 2>/dev/null
+
 # if there are no subdirectory
 replace "www" "w" -- *
 # a space before *
