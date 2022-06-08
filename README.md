@@ -1,7 +1,7 @@
 # Bash-Oneliner
 I am glad that you are here! I was working on bioinformatics a few years ago and was amazed by those single-word bash commands which are much faster than my dull scripts, time saved through learning command-line shortcuts and scripting. Recent years I am working on cloud computing and I keep recording those useful commands here. Not all of them is oneliner, but i put effort on making them brief and swift. I am mainly using Ubuntu, Amazon Linux, RedHat, Linux Mint, Mac and CentOS, sorry if the commands don't work on your system.
 
-This blog will focus on simple bash commands for parsing data and Linux system maintenance that i acquired from work and LPIC exam. I apologize that there are no detailed citation for all the commands, but they are probably from dear Google and Stackoverflow.
+This blog will focus on simple bash commands for parsing data and Linux system maintenance that i acquired from work and LPIC exam. I apologize that there are no detailed citation for all the commands, but they are probably from dear Google and Stack Overflow.
 
 English and bash are not my first language, please correct me anytime, thank you.
 If you know other cool commands, please teach me!
@@ -12,13 +12,13 @@ Here's a more stylish version of [Bash-Oneliner](https://onceupon.github.io/Bash
 
 - [Terminal Tricks](#terminal-tricks)
 - [Variable](#variable)
+- [Math](#math)
 - [Grep](#grep)
 - [Sed](#sed)
 - [Awk](#awk)
 - [Xargs](#xargs)
 - [Find](#find)
 - [Condition and Loop](#condition-and-loop)
-- [Math](#math)
 - [Time](#time)
 - [Download](#download)
 - [Random](#random)
@@ -69,7 +69,6 @@ Esc + c
 !!
 # run the previous command using sudo
 sudo !!
-# of course you need to enter your password
 ```
 
 ##### Run last command and change some parameter using caret substitution (e.g. last command: echo 'aaa' -> rerun as: echo 'bbb')
@@ -103,11 +102,11 @@ sudo !!
 # '?' serves as a single-character "wild card" for filename expansion.
 /b?n/?at      #/bin/cat
 
-# ‘[]’ serves to match the character from a range.
+# '[]' serves to match the character from a range.
 ls -l [a-z]*   #list all files with alphabet in its filename.
 
-# ‘{}’ can be used to match filenames with more than one patterns
-ls {*.sh,*.py}   #list all .sh and .py files
+# '{}' can be used to match filenames with more than one patterns
+ls *.{sh,py}   #list all .sh and .py files
 ```
 
 ##### Some handy environment variables
@@ -135,9 +134,19 @@ $HOSTNAME   current hostname
 ##### Variable substitution within quotes
 ```bash
 # foo=bar
- echo "'$foo'"
-#'bar'
-# double/single quotes around single quotes make the inner single quotes expand variables
+echo $foo
+# bar
+echo "$foo"
+# bar
+# single quotes cause variables to not be expanded
+echo '$foo'
+# $foo
+# single quotes within double quotes will not cancel expansion and will be part of the output
+echo "'$foo'"
+# 'bar'
+# doubled single quotes act as double quotes making variables expand
+echo ''$foo''
+# bar
 ```
 ##### Get the length of variable
 ```bash
@@ -178,11 +187,13 @@ echo ${var[@]#0}
 ```bash
 {var//a/,}
 ```
+
+##### Grep lines with strings from a file (e.g. lines with 'stringA or 'stringB' or 'stringC')
 ```bash
 #with grep
- test="god the father"
- grep ${test// /\\\|} file.txt
- # turning the space into 'or' (\|) in grep
+test="stringA stringB stringC"
+grep ${test// /\\\|} file.txt
+# turning the space into 'or' (\|) in grep
 ```
 
 ##### To change the case of the string stored in the variable to lowercase (Parameter Expansion)
@@ -205,9 +216,9 @@ echo "$bar" # foo
 ```bash
 echo $(( 10 + 5 ))  #15
 x=1
-echo $(( x++ )) #1 , notice that it is still 1, since it's post-incremen
+echo $(( x++ )) #1 , notice that it is still 1, since it's post-increment
 echo $(( x++ )) #2
-echo $(( ++x )) #4 , notice that it is not 3 since it's pre-incremen
+echo $(( ++x )) #4 , notice that it is not 3 since it's pre-increment
 echo $(( x-- )) #4
 echo $(( x-- )) #3
 echo $(( --x )) #1
@@ -265,7 +276,7 @@ echo "var=5;--var"| bc
 #####  Type of grep
 ```bash
 grep = grep -G # Basic Regular Expression (BRE)
-fgrep = grep -F # fixed text, ignoring meta-charachetrs
+fgrep = grep -F # fixed text, ignoring meta-characters
 egrep = grep -E # Extended Regular Expression (ERE)
 pgrep = grep -P # Perl Compatible Regular Expressions (PCRE)
 rgrep = grep -r # recursive
@@ -280,15 +291,15 @@ grep -c "^$"
 ```bash
 grep -o '[0-9]*'
 #or
-grep -oP '\d'
+grep -oP '\d*'
 ```
 #####  Grep integer with certain number of digits (e.g. 3)
 ```bash
-grep ‘[0-9]\{3\}’
+grep '[0-9]\{3\}'
 # or
-grep -E ‘[0-9]{3}’
+grep -E '[0-9]{3}'
 # or
-grep -P ‘\d{3}’
+grep -P '\d{3}'
 ```
 
 #####  Grep only IP address
@@ -395,14 +406,14 @@ grep 'A\|B\|C\|D'
 grep 'A.*B'
 ```
 
-##### Regex any singer character (e.g. ACB or AEB)
+##### Regex any single character (e.g. ACB or AEB)
 ```bash
 grep 'A.B'
 ```
 
 ##### Regex with or without a certain character (e.g. color or colour)
 ```bash
-grep ‘colou?r’
+grep 'colou\?r'
 ```
 
 ##### Grep all content of a fileA from fileB
@@ -511,7 +522,7 @@ sed -i '1s/^/[/' file
 
 ##### Add string at certain line number (e.g. add 'something' to line 1 and line 3)
 ```bash
-sed -e '1isomething -e '3isomething'
+sed -e '1isomething' -e '3isomething'
 ```
 
 ##### Add string to end of file (e.g. "]")
@@ -538,7 +549,7 @@ sed -e 's/$/\}\]/' filename
 sed 's/.\{4\}/&\n/g'
 ```
 
-##### Concatenate/combine/join files with a seperator and next line (e.g separate by ",")
+##### Concatenate/combine/join files with a separator and next line (e.g separate by ",")
 ```bash
 sed -s '$a,' *.json > all.json
 ```
@@ -775,7 +786,7 @@ awk '{printf("%s\t%s\n",NR,$0)}'
 
 ##### Break combine column data into rows
 ```bash
-# For example, seperate the following content:
+# For example, separate the following content:
 # David    cat,dog
 # into
 # David    cat
@@ -2063,7 +2074,7 @@ http://onceuponmine.blogspot.tw/2017/07/create-your-first-simple-daemon.html
 ##### Tutorial for using your gmail to send email
 http://onceuponmine.blogspot.tw/2017/10/setting-up-msmtprc-and-use-your-gmail.html
 
- ##### Using telnet to test open ports, test if you can connect to a port (e.g 53) of a server (e.g 192.168.2.106)
+##### Using telnet to test open ports, test if you can connect to a port (e.g 53) of a server (e.g 192.168.2.106)
 ```bash
 telnet 192.168.2.106 53
 ```
@@ -2423,7 +2434,7 @@ nc -vw5 google.com 22
 # From server A:
 $ sudo nc -l 80
 # then you can connect to the 80 port from another server (e.g. server B):
-# e.g. telent <server A IP address> 80
+# e.g. telnet <server A IP address> 80
 # then type something in server B
 # and you will see the result in server A!
 ```
@@ -2565,16 +2576,16 @@ sudo iptables –A INPUT –s <IP> -p tcp –dport 80 –j DROP
 ```bash
 # If file is not specified, the file /usr/share/dict/words is used.
 look phy|head -n 10
-# Phil
-# Philadelphia
-# Philadelphia's
-# Philby
-# Philby's
-# Philip
-# Philippe
-# Philippe's
-# Philippians
-# Philippine
+# phycic
+# Phyciodes
+# phycite
+# Phycitidae
+# phycitol
+# phyco-
+# phycochrom
+# phycochromaceae
+# phycochromaceous
+# phycochrome
 ```
 
 ##### Repeat printing string n times (e.g. print 'hello world' five times)
@@ -2629,7 +2640,41 @@ sdiff fileA fileB
 
 ##### Compare two files, strip trailing carriage return/ nextline (e.g. fileA, fileB)
 ```bash
- diff fileA fileB --strip-trailing-cr
+diff fileA fileB --strip-trailing-cr
+```
+
+##### Find common/differing lines
+```bash
+# having two sorted and uniqed files (for example after running `$ sort -uo fileA fileA` and same for fileB):
+# ------
+# fileA:
+# ------
+# joey
+# kitten
+# piglet
+# puppy
+# ------
+# fileB:
+# ------
+# calf
+# chick
+# joey
+# puppy
+#
+# Find lines in both files
+comm -12 fileA fileB
+# joey
+# puppy
+#
+# Find lines in fileB that are NOT in fileA
+comm -13 fileA fileB
+# calf
+# chick
+#
+# Find lines in fileA that are NOT in fileB
+comm -23 fileA fileB
+# kitten
+# piglet
 ```
 
 ##### Number a file (e.g. fileA)
