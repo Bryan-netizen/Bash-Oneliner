@@ -33,22 +33,23 @@ Here's a more stylish version of [Bash-Oneliner](https://onceupon.github.io/Bash
 
 #####  Using Ctrl keys
 ```
+Ctrl + a : move to the beginning of line.
+Ctrl + d : if you've type something, Ctrl + d deletes the character under the cursor, else, it escapes the current shell.
+Ctrl + e : move to the end of line.
+Ctrl + k : delete all text from the cursor to the end of line.
+Ctrl + l : equivalent to clear.
 Ctrl + n : same as Down arrow.
 Ctrl + p : same as Up arrow.
+Ctrl + q : to resume output to terminal after Ctrl + s.
 Ctrl + r : begins a backward search through command history.(keep pressing Ctrl + r to move backward)
 Ctrl + s : to stop output to terminal.
-Ctrl + q : to resume output to terminal after Ctrl + s.
-Ctrl + a : move to the beginning of line.
-Ctrl + e : move to the end of line.
-Ctrl + d : if you've type something, Ctrl + d deletes the character under the cursor, else, it escapes the current shell.
-Ctrl + k : delete all text from the cursor to the end of line.
-Ctrl + x + backspace : delete all text from the beginning of line to the cursor.
 Ctrl + t : transpose the character before the cursor with the one under the cursor, press Esc + t to transposes the two words before the cursor.
-Ctrl + w : cut the word before the cursor; then Ctrl + y paste it
 Ctrl + u : cut the line before the cursor; then Ctrl + y paste it
-Ctrl + _ : undo typing.
-Ctrl + l : equivalent to clear.
+Ctrl + w : cut the word before the cursor; then Ctrl + y paste it
+Ctrl + x + backspace : delete all text from the beginning of line to the cursor.
 Ctrl + x + Ctrl + e : launch editor defined by $EDITOR to input your command. Useful for multi-line commands.
+Ctrl + z : stop current running process and keep it in background. You can use `fg` to continue the process in the foreground, or `bg` to continue the process in the background.
+Ctrl + _ : undo typing.
 ```
 ##### Change case
 ```bash
@@ -59,6 +60,7 @@ Esc + l
 Esc + c
 # converts letter under the cursor to uppercase, rest of the word to lowercase.
 ```
+
 ##### Run history number (e.g. 53)
 ```bash
 !53
@@ -73,15 +75,15 @@ sudo !!
 
 ##### Run last command and change some parameter using caret substitution (e.g. last command: echo 'aaa' -> rerun as: echo 'bbb')
 ```bash
-#last command: echo 'aaa'
+# last command: echo 'aaa'
 ^aaa^bbb
 
 #echo 'bbb'
 #bbb
 
-#Notice that only the first aaa will be replaced, if you want to replace all 'aaa', use ':&' to repeat it:
+# Notice that only the first aaa will be replaced, if you want to replace all 'aaa', use ':&' to repeat it:
 ^aaa^bbb^:&
-#or
+# or
 !!:gs/aaa/bbb/
 
 ```
@@ -118,6 +120,7 @@ $?   :most recent foreground pipeline exit status.
 $-   :current options set for the shell.
 $$   :pid of the current shell (not subshell).
 $!   :is the PID of the most recent background command.
+$_   :last argument of the previously executed command, or the path of the bash script.
 
 $DESKTOP_SESSION     current display manager
 $EDITOR   preferred text editor.
@@ -127,6 +130,31 @@ $PWD    current directory
 $SHELL  current shell
 $USER   current username
 $HOSTNAME   current hostname
+```
+
+##### Using vi-mode in your shell
+```bash
+set -o vi
+# change bash shell to vi mode
+# then hit the Esc key to change to vi edit mode (when `set -o vi` is set)
+k
+# in vi edit mode - previous command
+j
+# in vi edit mode - next command
+0
+# in vi edit mode - beginning of the command
+R
+# in vi edit mode - replace current characters of command
+2w
+# in vi edit mode - next to 2nd word
+b
+# in vi edit mode - previous word
+i
+# in vi edit mode - go to insert mode
+v
+# in vi edit mode - edit current command in vi
+man 3 readline
+# man page for complete readline mapping
 ```
 
 ## Variable
@@ -144,7 +172,7 @@ echo '$foo'
 # single quotes within double quotes will not cancel expansion and will be part of the output
 echo "'$foo'"
 # 'bar'
-# doubled single quotes act as double quotes making variables expand
+# doubled single quotes act as if there are no quotes at all
 echo ''$foo''
 # bar
 ```
@@ -190,7 +218,7 @@ echo ${var[@]#0}
 
 ##### Grep lines with strings from a file (e.g. lines with 'stringA or 'stringB' or 'stringC')
 ```bash
-#with grep
+# with grep
 test="stringA stringB stringC"
 grep ${test// /\\\|} file.txt
 # turning the space into 'or' (\|) in grep
@@ -278,8 +306,8 @@ echo "var=5;--var"| bc
 grep = grep -G # Basic Regular Expression (BRE)
 fgrep = grep -F # fixed text, ignoring meta-characters
 egrep = grep -E # Extended Regular Expression (ERE)
-pgrep = grep -P # Perl Compatible Regular Expressions (PCRE)
 rgrep = grep -r # recursive
+grep -P # Perl Compatible Regular Expressions (PCRE)
 ```
 
 #####  Grep and count number of empty lines
@@ -290,7 +318,7 @@ grep -c "^$"
 #####  Grep and return only integer
 ```bash
 grep -o '[0-9]*'
-#or
+# or
 grep -oP '\d*'
 ```
 #####  Grep integer with certain number of digits (e.g. 3)
@@ -313,7 +341,7 @@ grep -Po '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 ```bash
 grep -w 'target'
 
-#or using RE
+# or using RE
 grep '\btarget\b'
 ```
 #####  Grep returning lines before and after match (e.g. 'bbo')
@@ -351,7 +379,7 @@ grep -v '^#' file.txt
 ##### Grep variables with space within it (e.g. myvar="some strings")
 ```bash
 grep "$myvar" filename
-#remember to quote the variable!
+# remember to quote the variable!
 ```
 
 ##### Grep only one/first match (e.g. 'bbo')
@@ -430,8 +458,8 @@ grep $'\t'
 ```bash
 $echo "$long_str"|grep -q "$short_str"
 if [ $? -eq 0 ]; then echo 'found'; fi
-#grep -q will output 0 if match found
-#remember to add space between []!
+# grep -q will output 0 if match found
+# remember to add space between []!
 ```
 
 ##### Grep strings between a bracket()
@@ -517,7 +545,7 @@ sed -i '$ s/.$//' filename
 
 ##### Add string to beginning of file (e.g. "\[")
 ```bash
-sed -i '1s/^/[/' file
+sed -i '1s/^/[/' filename
 ```
 
 ##### Add string at certain line number (e.g. add 'something' to line 1 and line 3)
@@ -536,7 +564,7 @@ sed '$a\'
 
 ##### Add string to beginning of every line (e.g. 'bbo')
 ```bash
-sed -e 's/^/bbo/' file
+sed -e 's/^/bbo/' filename
 ```
 
 ##### Add string to end of each line (e.g. "}")
@@ -547,6 +575,13 @@ sed -e 's/$/\}\]/' filename
 ##### Add \n every nth character (e.g. every 4th character)
 ```bash
 sed 's/.\{4\}/&\n/g'
+```
+
+##### Add a line after the line that matches the pattern (e.g. add a new line with "world" after the line with "hello")
+```bash
+sed '/hello*/a world' filename
+# hello
+# world
 ```
 
 ##### Concatenate/combine/join files with a separator and next line (e.g separate by ",")
@@ -617,12 +652,12 @@ sed "s/$/\t$i/"
 # $i is the valuable you want to add
 
 # To add the filename to every last column of the file
-for i in $(ls);do sed -i "s/$/\t$i/" $i;done
+for i in $(ls); do sed -i "s/$/\t$i/" $i; done
 ```
 
 ##### Add extension of filename to last column
 ```bash
-for i in T000086_1.02.n T000086_1.02.p;do sed "s/$/\t${i/*./}/" $i;done >T000086_1.02.np
+for i in T000086_1.02.n T000086_1.02.p; do sed "s/$/\t${i/*./}/" $i; done >T000086_1.02.np
 ```
 
 ##### Remove newline\ nextline
@@ -657,7 +692,7 @@ sed '$ s/.$//'
 
 ##### Insert character at specified position of file (e.g. AAAAAA --> AAA#AAA)
 ```bash
-sed -r -e 's/^.{3}/&#/' file
+sed -r -e 's/^.{3}/&#/' filename
 ```
 
 
@@ -712,7 +747,7 @@ awk -v N=7 '{print}/bbo/&& --N<=0 {exit}'
 
 ##### Print filename and last line of all files in directory
 ```bash
-ls|xargs -n1 -I file awk '{s=$0};END{print FILENAME,s}' file
+ls|xargs -n1 -I file awk '{s=$0};END{print FILENAME,s}' filename
 ```
 
 ##### Add string to the beginning of a column (e.g add "chr" to column $3)
@@ -722,12 +757,12 @@ awk 'BEGIN{OFS="\t"}$3="chr"$3'
 
 ##### Remove lines with string (e.g. 'bbo')
 ```bash
-awk '!/bbo/' file
+awk '!/bbo/' filename
 ```
 
 ##### Remove last column
 ```bash
-awk 'NF{NF-=1};1' file
+awk 'NF{NF-=1};1' filename
 ```
 
 ##### Usage and meaning of NR and FNR
@@ -792,7 +827,7 @@ awk '{printf("%s\t%s\n",NR,$0)}'
 # David    cat
 # David    dog
 
-awk '{split($2,a,",");for(i in a)print $1"\t"a[i]}' file
+awk '{split($2,a,",");for(i in a)print $1"\t"a[i]}' filename
 
 # Detail here:　http://stackoverflow.com/questions/33408762/bash-turning-single-comma-separated-column-into-multi-line-string
 ```
@@ -906,7 +941,7 @@ find /dir/to/A -type f -name "*.py" -print 0| xargs -0 -r -I file cp -v -p file 
 
 ##### With sed
 ```bash
-ls |xargs -n1 -I file sed -i '/^Pos/d' file
+ls |xargs -n1 -I file sed -i '/^Pos/d' filename
 ```
 
 ##### Add the file name to the first line of file
@@ -1021,9 +1056,10 @@ else
   echo >&2 "Fatal error. This script requires mydir."
 fi
 
-# if variable is null
-if [ ! -s "myvariable" ]; then echo -e "variable is null!" ; fi
-#True of the length if "STRING" is zero.
+# Check if a variable is null
+if [ -z "$var" ]; then echo "NULL"; else echo "Not NULL"; fi
+# or 
+[ -z "$var" ] && echo "NULL"
 
 # Using test command (same as []), to test if the length of variable is nonzero
 test -n "$myvariable" && echo myvariable is "$myvariable" || echo myvariable is not set
@@ -1059,39 +1095,39 @@ if [[ $age -gt 21 ]]; then echo -e "forever 21!!" ; fi
 ##### For loop
 ```bash
 # Echo the file name under the current directory
-for i in $(ls); do echo file $i;done
-#or
+for i in $(ls); do echo file $i; done
+# or
 for i in *; do echo file $i; done
 
 # Make directories listed in a file (e.g. myfile)
 for dir in $(<myfile); do mkdir $dir; done
 
 # Press any key to continue each loop
-for i in $(cat tpc_stats_0925.log |grep failed|grep -o '\query\w\{1,2\}');do cat ${i}.log; read -rsp $'Press any key to continue...\n' -n1 key;done
+for i in $(cat tpc_stats_0925.log |grep failed|grep -o '\query\w\{1,2\}'); do cat ${i}.log; read -rsp $'Press any key to continue...\n' -n1 key; done
 
 # Print a file line by line when a key is pressed,
 oifs="$IFS"; IFS=$'\n'; for line in $(cat myfile); do ...; done
 while read -r line; do ...; done <myfile
 
-#If only one word a line, simply
+# If only one word a line, simply
 for line in $(cat myfile); do echo $line; read -n1; done
 
-#Loop through an array
-for i in "${arrayName[@]}"; do echo $i;done
+# Loop through an array
+for i in "${arrayName[@]}"; do echo $i; done
 
 ```
 
 ##### While loop,
 ```bash
 # Column subtraction of a file (e.g. a 3 columns file)
-while read a b c; do echo $(($c-$b));done < <(head filename)
+while read a b c; do echo $(($c-$b)); done < <(head filename)
 #there is a space between the two '<'s
 
 # Sum up column subtraction
 i=0; while read a b c; do ((i+=$c-$b)); echo $i; done < <(head filename)
 
 # Keep checking a running process (e.g. perl) and start another new process (e.g. python) immediately after it. (BETTER use the wait command! Ctrl+F 'wait')
-while [[ $(pidof perl) ]];do echo f;sleep 10;done && python timetorunpython.py
+while [[ $(pidof perl) ]]; do echo f; sleep 10; done && python timetorunpython.py
 ```
 
 ##### switch (case in bash)
@@ -1149,6 +1185,29 @@ date --date @1615852800
 
 ```
 
+##### Print current time point for N days ago or N days after
+```bash
+# print current date first (for the following example)
+date +"%F %H:%M:%S"
+# 2023-03-11 16:17:09
+
+# print the time that is 1 day ago
+date -d"1 day ago" +"%F %H:%M:%S"
+# 2023-03-10 16:17:09
+
+# print the time that is 7 days ago
+date -d"7 days ago" +"%F %H:%M:%S"
+# 2023-03-04 16:17:09
+
+# print the time that is a week ago
+date -d"1 week ago" +"%F %H:%M:%S"
+# 2023-03-04 16:17:09
+
+# add 1 day to date
+date -d"-1 day ago" +"%F %H:%M:%S"
+# 2023-03-12 16:17:09
+```
+
 ##### wait for random duration (e.g. sleep 1-5 second, like adding a jitter)
 ```bash
 sleep $[ ( $RANDOM % 5 ) + 1 ]
@@ -1162,7 +1221,7 @@ TMOUT=10
 
 ##### Set how long you want to run a command
 ```bash
-#This will run the command 'sleep 10' for only 1 second.
+# This will run the command 'sleep 10' for only 1 second.
 timeout 1 sleep 10
 ```
 
@@ -1497,9 +1556,17 @@ stat filename.txt
 ps aux
 ```
 
+##### List processes by top memory usage
+```bash
+ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head
+```
+
 ##### Display a tree of processes
 ```bash
 pstree
+
+# or
+ps aux --forest
 ```
 
 ##### Find maximum number of processes
@@ -1531,7 +1598,7 @@ who -r
 ##### Change SysV runlevel (e.g. 5)
 ```bash
 init 5
-#or
+# or
 telinit 5
 ```
 
@@ -1733,7 +1800,7 @@ pushd .
 # then pop
 popd
 
-#or use dirs to display the list of currently remembered directories.
+# or use dirs to display the list of currently remembered directories.
 dirs -l
 ```
 
@@ -1744,7 +1811,7 @@ df -h
 # or
 du -h
 
-#or
+# or
 du -sk /var/log/* |sort -rn |head -10
 ```
 
@@ -1774,7 +1841,7 @@ runlevel
 ```bash
 init 3
 
-#or
+# or
 telinit 3
 ```
 
@@ -1905,7 +1972,7 @@ ldconfig -p
 ldd /bin/ls
 ```
 
-##### Check user login
+##### Check the most recent login of all users
 ```bash
 lastlog
 ```
@@ -2055,11 +2122,6 @@ killall pulseaudio
 # then press Alt-F2 and type in pulseaudio
 ```
 
-##### When sound not working
-```bash
-killall pulseaudio
-```
-
 ##### List information about SCSI devices
 ```bash
 lsscsi
@@ -2096,7 +2158,7 @@ ps aux|grep python
 ```bash
 ps -p <PID>
 
-#or
+# or
 cat /proc/<PID>/status
 cat /proc/<PID>/stack
 cat /proc/<PID>/stat
@@ -2144,21 +2206,21 @@ sudo dpkg --purge <package_name>
 ```bash
 ssh -f -L 9000:targetservername:8088 root@192.168.14.72 -N
 #-f: run in background; -L: Listen; -N: do nothing
-#the 9000 of your computer is now connected to the 8088 port of the targetservername through 192.168.14.72
-#so that you can see the content of targetservername:8088 by entering localhost:9000 from your browser.
+# the 9000 of your computer is now connected to the 8088 port of the targetservername through 192.168.14.72
+# so that you can see the content of targetservername:8088 by entering localhost:9000 from your browser.
 ```
 ##### Get process ID of a process (e.g. sublime_text)
 ```bash
-#pidof
+# pidof
 pidof sublime_text
 
-#pgrep, you don't have to type the whole program name
+# pgrep, you don't have to type the whole program name
 pgrep sublim
 
-#pgrep, echo 1 if process found, echo 0 if no such process
+# pgrep, echo 1 if process found, echo 0 if no such process
 pgrep -q sublime_text && echo 1 || echo 0
 
-#top, takes longer time
+# top, takes longer time
 top|grep sublime_text
 ```
 
@@ -2223,7 +2285,12 @@ sar -f /var/log/sa/sa31|tail
 journalctl --file ./log/journal/a90c18f62af546ccba02fa3734f00a04/system.journal  --since "2020-02-11 00:00:00"
 ```
 
-##### Show a listing of last logged in users.
+##### Show a listing of last logged in users
+```bash
+last
+```
+
+##### Show a listing of unsuccessful (bad) login attempts 
 ```bash
 lastb
 ```
@@ -2401,6 +2468,11 @@ dig +short www.example.com
 host www.example.com
 ```
 
+##### Check public IP address
+```bash
+curl http://checkip.amazonaws.com
+```
+
 ##### Get DNS TXT record a of domain
 ```bash
 dig -t txt www.example.com
@@ -2441,7 +2513,7 @@ $ sudo nc -l 80
 
 ##### Check which ports are listening for TCP connections from the network
 ```bash
-#notice that some companies might not like you using nmap
+# note that some companies might not like you using nmap
 nmap -sT -O localhost
 
 # check port 0-65535
@@ -2449,7 +2521,7 @@ nmap  -p0-65535 localhost
 ```
 ##### Check if a host is up and scan for open ports, also skip host discovery.
 ```bash
-#skips checking if the host is alive which may sometimes cause a false positive and stop the scan.
+# skips checking if the host is alive. this may sometimes cause a false positive, stopping the scan.
 $ nmap google.com -Pn
 
 # Example output:
@@ -2471,7 +2543,7 @@ $ nmap -A -T4 scanme.nmap.org
 # -A to enable OS and version detection, script scanning, and traceroute; -T4 for faster execution
 ```
 
-##### Look up website information (e.g. name server), searches for an object in a RFC 3912 database.
+##### Look up website information (e.g. name server), searches for an object in a RFC 3912 database
 ```bash
 whois google.com
 ```
@@ -2481,7 +2553,7 @@ whois google.com
 openssl s_client -showcerts -connect www.example.com:443
 ```
 
-##### Display IP address
+##### Display network interfaces and their associated IP addresses
 ```bash
 ip a
 ```
@@ -2540,6 +2612,10 @@ curl -I http://example.com/
 # ETag: "xxxxxx"
 # Accept-Ranges: bytes
 # Vary: Accept-Encoding
+```
+##### Find out the time spent between request and response
+```
+curl -v -o /dev/null -s -w 'Total: %{time_total}s\n' google.com
 ```
 
 ##### Find out the http status code of a URL
@@ -2682,11 +2758,11 @@ comm -23 fileA fileB
 ```bash
 nl fileA
 
-#or
+# or
 nl -nrz fileA
 # add leading zeros
 
-#or
+# or
 nl -w1 -s ' '
 # making it simple, blank separate
 ```
@@ -2750,8 +2826,8 @@ echo {1,2}{1,2}
 ```bash
 set = {A,T,C,G}
 group= 5
-for ((i=0; i<$group; i++));do
-    repetition=$set$repetition;done
+for ((i=0; i<$group; i++)); do
+    repetition=$set$repetition; done
     bash -c "echo "$repetition""
 ```
 
@@ -2821,7 +2897,7 @@ echo -e 'text here \c'
 
 ##### View first 50 characters of file
 ```bash
-head -c 50 file
+head -c 50 filename
 ```
 
 ##### Cut and get last column of a file
@@ -2841,12 +2917,33 @@ var=$((var+1))
 cat filename|rev|cut -f1|rev
 ```
 
-##### Cat to a file
+##### Create or replace a file with contents
 ```bash
 cat >myfile
 let me add sth here
-exit by control + c
-^C
+# exit with ctrl+d
+
+# or using tee
+tee myfile
+let me add sth else here
+# exit with ctrl+d
+```
+
+##### Append to a file with contents
+```bash
+cat >>myfile
+let me add sth here
+# exit with ctrl+d
+
+# or
+cat << EoF >> filename
+> add something here
+> EoF 
+
+# or using tee
+tee -a myfile
+let me add sth else here
+# exit with ctrl+d
 ```
 
 ##### Clear the contents of a file (e.g. filename)
@@ -2861,9 +2958,9 @@ echo 'hihi' >>filename
 
 ##### Working with json data
 ```bash
-#install the useful jq package
-#sudo apt-get install jq
-#e.g. to get all the values of the 'url' key, simply pipe the json to the following jq command(you can use .[]. to select inner json, i.e jq '.[].url')
+# Install the useful jq package
+# sudo apt-get install jq
+# e.g. to get all the values of the 'url' key, simply pipe the json to the following jq command(you can use .[]. to select inner json, i.e jq '.[].url')
 cat file.json | jq '.url'
 ```
 
@@ -2929,14 +3026,14 @@ tac filename
 
 ##### Reverse the result from `uniq -c`
 ```bash
-while read a b; do yes $b |head -n $a ;done <test.txt
+while read a b; do yes $b |head -n $a ; done <test.txt
 ```
 
 
 ## Others
 [[back to top](#handy-bash-one-liners)]
 
-##### Describe the format and characteristics of image files.
+##### Describe the format and characteristics of image files
 ```bash
 identify myimage.png
 #myimage.png PNG 1049x747 1049x747+0+0 8-bit sRGB 1.006MB 0.000u 0:00.000
@@ -3059,7 +3156,7 @@ history -w
 vi ~/.bash_history
 history -r
 
-#or
+# or
 history -d [line_number]
 ```
 
@@ -3109,11 +3206,40 @@ rsync -av directory user@ip_address:/path/to/directory.bak
 # skip files that are newer on receiver (i prefer this one!)
 ```
 
+##### Create a temporary directory and `cd` into it
+```bash
+cd $(mktemp -d)
+# for example, this will create a temporary directory "/tmp/tmp.TivmPLUXFT"
+```
+
 ##### Make all directories at one time!
 ```bash
 mkdir -p project/{lib/ext,bin,src,doc/{html,info,pdf},demo/stat}
 # -p: make parent directory
-# this will create project/doc/html/; project/doc/info; project/lib/ext ,etc
+# this will create:
+# project/
+# project/bin/
+# project/demo/
+# project/demo/stat/
+# project/doc/
+# project/doc/html/
+# project/doc/info/
+# project/doc/pdf/
+# project/lib/
+# project/lib/ext/
+# project/src/
+#
+# project/
+# ├── bin
+# ├── demo
+# │   └── stat
+# ├── doc
+# │   ├── html
+# │   ├── info
+# │   └── pdf
+# ├── lib
+# │   └── ext
+# └── src
 ```
 
 ##### Run command only if another command returns zero exit status (well done)
@@ -3183,6 +3309,12 @@ scp -r directoryname user@ip:/path/to/send
 # :(){:|:&};:
 ```
 
+##### Trigger kernel crash
+```bash
+# Don't try this at home! 
+echo c > /proc/sysrq-trigger
+```
+
 ##### Use the last argument
 ```bash
 !$
@@ -3244,9 +3376,9 @@ fallocate -l 10G 10Gigfile
 
 ##### Create dummy file of certain size (e.g. 200mb)
 ```bash
-dd if=/dev/zero of=//dev/shm/200m bs=1024k count=200
+dd if=/dev/zero of=/dev/shm/200m bs=1024k count=200
 # or
-dd if=/dev/zero of=//dev/shm/200m bs=1M count=200
+dd if=/dev/zero of=/dev/shm/200m bs=1M count=200
 
 # Standard output:
 # 200+0 records in
@@ -3259,9 +3391,29 @@ dd if=/dev/zero of=//dev/shm/200m bs=1M count=200
 watch -n 1 wc -l filename
 ```
 
+##### Use Bash Strict Mode
+```bash
+# These options can make your code safer but, depending on how your pipeline is written, it might be too aggressive 
+# or it might not catch the errors that you are interested in
+
+# for reference see https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
+#               and https://mywiki.wooledge.org/BashPitfalls#set_-euo_pipefail
+
+set -o errexit      # exit immediately if a pipeline returns a non-zero status
+set -o errtrace     # trap ERR from shell functions, command substitutions, and commands from subshell
+set -o nounset      # treat unset variables as an error
+set -o pipefail     # pipe will exit with last non-zero status, if applicable
+set -Eue -o pipefail  # shorthand for above (pipefail has no short option)
+```
+
 ##### Print commands and their arguments when execute (e.g. echo `expr 10 + 20 `)
 ```bash
 set -x; echo `expr 10 + 20 `
+# or
+set -o xtrace; echo `expr 10 + 20 `
+
+# to turn it off..
+set +x
 ```
 
 ##### Print some meaningful sentences to you (install fortune first)
